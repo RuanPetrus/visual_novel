@@ -14,8 +14,10 @@ FONTS_FOLDER = "fonts" + SEP
 CARACTER_FOLDER = IMAGES_FOLDER + "caracters" + SEP
 BG_FOLDER = IMAGES_FOLDER + "backgrounds" + SEP
 MUSIC_FOLDER = "music" + SEP
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+# SCREEN_WIDTH = 1920
+# SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1400
+SCREEN_HEIGHT = 800
 DIALOG_PADDING = 25
 DIALOG_CORNER_RADIUS = 10
 DIALOG_OPPACITY = 0.8
@@ -402,9 +404,9 @@ def game_script(game: Game) -> None:
             "responsabilidade_social": 50,
             "integridade": 50,
             "inclusao": 50,
-            "respeito_com_equipe": 5,
-            "respeito_com_chefe" : 5,
-            "respeito_na_empresa": 5,
+            "respeito_com_equipe": 50,
+            "respeito_com_chefe" : 50,
+            "respeito_na_empresa": 50,
         }
         game.player_status = status
 
@@ -412,6 +414,9 @@ def game_script(game: Game) -> None:
         bg_reception = pygame.image.load(BG_FOLDER + 'gigahard_entrance.png').convert()
         bg_office_tour = pygame.image.load(BG_FOLDER + 'gigahard_tour.png').convert()
         bg_meeting_room = pygame.image.load(BG_FOLDER + 'gigahard_office.png').convert()
+        happy_hour = pygame.image.load(BG_FOLDER + 'happy_hour.png').convert()
+        carlos_office = pygame.image.load(BG_FOLDER + 'carlos_office.png').convert()
+        boarding = pygame.image.load(BG_FOLDER + 'boarding_room.png').convert()
 
         thiago = Caracter(
             name="Thiago", 
@@ -444,6 +449,18 @@ def game_script(game: Game) -> None:
             pos=Pos.LEFT
         )
 
+        julio = Caracter(
+            name="Júlio", 
+            sprite=scale_uniform(pygame.image.load(CARACTER_FOLDER + 'julio.png').convert_alpha(), 0.5), 
+            pos=Pos.LEFT
+        )
+
+        leticia = Caracter(
+            name="Letícia", 
+            sprite=scale_uniform(pygame.image.load(CARACTER_FOLDER + 'leticia.png').convert_alpha(), 0.5), 
+            pos=Pos.LEFT
+        )
+
         def capitulo_1():
             scene(bg_office)
 
@@ -463,19 +480,24 @@ def game_script(game: Game) -> None:
             show(alissa, Pos.RIGHT)
             dialog("Oi… eu sou a Alissa. Também recebi um e-mail assim.", alissa)
 
+            hide(alissa)
+            hide(thiago)
             show(recepcionista, Pos.CENTER)
             dialog("Ah, claro! Vocês devem fazer parte da nova leva de contratados. Vou ligar para o andar de cima, alguém já deve vir recebê-los.", recepcionista)
 
             hide(recepcionista)
             show(carlos, Pos.CENTER)
             dialog("Olá! Meu nome é Carlos. Provavelmente serei o gerente de vocês. Gostariam de conhecer o prédio?", carlos)
+            hide(carlos)
+
+            show(alissa, Pos.RIGHT)
+            show(thiago,Pos.CENTER)
 
             dialog("Sim, claro.", thiago)
             dialog("Sim!", alissa)
 
-            hide(carlos)
-            hide(thiago)
             hide(alissa)
+            hide(thiago)
 
             scene(bg_office_tour)
             show(thiago)
@@ -490,18 +512,22 @@ def game_script(game: Game) -> None:
             dialog("Entendi… o clima deve estar bem intenso aqui…", thiago)
 
             dialog("Ainda não começamos os trabalhos, mas acredito que em breve as coisas estarão bem intensas sim.", carlos)
-
-            show(alissa, Pos.RIGHT)
+            hide(thiago)
+            hide(carlos)
+            show(alissa, Pos.CENTER)
+            
             dialog("...", alissa)
-
+            hide(alissa)
+            show(carlos,Pos.CENTER)
             dialog("Bem… deixe-me apresentar os colegas de squad de vocês.", carlos)
+            
 
-            show(maria)
+            show(maria,Pos.LEFT)    
             dialog("Essa é a Maria, a funcionária mais antiga e esforçada do squad.", carlos)
             dialog("Prazer, eu sou a Maria.", maria)
-
             hide(maria)
-            show(wellington)
+
+            show(wellington,Pos.LEFT)   
             dialog("E este é o Wellington, também trabalha há uns anos na empresa.", carlos)
             dialog("Oi, eu sou o Wellington.", wellington)
 
@@ -510,8 +536,6 @@ def game_script(game: Game) -> None:
             dialog("Amanhã, nesta mesma sala, às 16h teremos nossa primeira reunião.", carlos)
 
             dialog("Todos: Ok")
-            hide(alissa)
-            hide(thiago)
             hide(carlos)
 
             # Dia 2
@@ -520,14 +544,17 @@ def game_script(game: Game) -> None:
 
             show(carlos, Pos.CENTER)
             dialog("Então… todos trouxeram as fontes de dados que se comprometeram a trazer?", carlos)
+            hide(carlos)
 
-            show(thiago, Pos.LEFT)
+            show(thiago, Pos.CENTER)
             dialog("Encontrei uma fonte de dados financeiros mantida por uma empresa privada. O acesso é pago, mas parece bastante promissora.", thiago)
+            hide(thiago)
 
-            show(alissa, Pos.RIGHT)
+            show(alissa, Pos.CENTER)
             dialog("Eu achei duas fontes… não são muito abrangentes, mas eu achei os dados bem estruturados e robustos.", alissa)
+            hide(alissa)
 
-            show(wellington)
+            show(wellington,Pos.CENTER)
             dialog("Consegui encontrar uma API feita por uma associação de produtores rurais. Esses dados são ótimos, oferecem informações únicas sobre um nicho que é muito importante para nós.", wellington )
             dialog("Estarmos de posse desses dados nos colocaria em uma posição muito privilegiada, mas o problema é que não encontrei a licença atrelada ao serviço.", wellington )
             dialog("Temo que, se entrarmos em contato diretamente, por se tratar de um produto com fins lucrativos, eles possam negar o acesso.", wellington )
@@ -543,11 +570,301 @@ def game_script(game: Game) -> None:
                        {"integridade": -10, "respeito_com_equipe": 5}),
             ])
 
+
+            hide(wellington)
+            show(maria, Pos.CENTER)
+            dialog("Consegui montar um script simples para extrair dados das conversas entre usuários de outros aplicativos nossos.", maria)
+            dialog("Ainda é algo básico, mas no futuro dá para otimizar e estruturar melhor. Como se trata de um chat, conseguimos informações praticamente em tempo real.", maria)
+            hide(maria)
+
+            dialog("Esses dados parecem extremamente valiosos, Maria. Excelente trabalho. Como sempre, você se destaca nas entregas.", carlos)
+
+            show(alissa, Pos.CENTER)
+            dialog("Mas… os usuários desses apps sabem que as conversas deles podem ser utilizadas para treinar modelos como o do InsightPro?", alissa)
+            hide(alissa)
+            show(maria,Pos.CENTER)
+
+            dialog("Algo nesse sentido está mencionado no rodapé dos termos de uso, mas é um texto bem genérico. Não tenho certeza se está claro para os usuários.", maria)
+
+            menu([
+                Option("Mesmo sem encontrar uma licença explícita, a organização pode ter diretrizes internas sobre o uso da API. O correto é entrar em contato antes de utilizar qualquer dado. Enquanto não houver autorização formal, não devemos acessar nem armazenar essas informações", 
+                       {"integridade": 10, "respeito_com_equipe": -10}),
+                Option("A API está aberta, e conseguimos baixar os dados sem obstáculos. Podemos coletar tudo agora e só depois perguntar sobre a licença. Se houver uma negativa futura, ao menos já teremos uma base histórica valiosa salva para trabalhar.a", 
+                       {"integridade": -5, "respeito_com_equipe": 5}),
+                Option("Enquanto não houver uma restrição clara, devemos aproveitar. Se deixarmos passar, a Gluglu pode sair na frente. Vamos extrair o máximo possível agora - depois vemos como lidar com a parte legal.", 
+                       {"integridade": -10, "respeito_com_equipe": 5}),
+            ])
+            hide(maria)
+
         def capitulo_2():
-            """TODO: Colocar aqui o capitulo 2 seguindo o exemplo do capitulo 1"""
+            scene(boarding)
+            dialog("Desde a coleta inicial dos dados, dias se passaram, com todos os membros do squad trabalhando intensamente…")
+
+            dialog("Durante a reunião")
+
+            show(alissa, Pos.RIGHT)
+            dialog("Thiago… acabei de perceber que o último PR que você subiu pro repositório aberto estava com dados reais no commit.", alissa)
+            hide(alissa)
+
+            show(maria, Pos.CENTER)
+            dialog("Sério? Informações pessoais de centenas de usuários estão expostas!", maria)
+            hide(maria)
+
+            show(carlos, Pos.LEFT)
+            dialog("Precisamos agir rápido, mas se alguém perguntar, melhor dizer que foi uma falha genérica de configuração. Se gerarmos pânico interno, nosso squad inteiro perderá credibilidade com a diretoria.", carlos)
+            show(thiago,Pos.RIGHT)
+
+            dialog("O que fazer após o vazamento acidental?")
+            menu([
+                Option("Entendo, Carlos…Vou seguir sua orientação, minimizar o ocorrido para a diretoria e apagar os rastros", 
+                    {"privacidade": -20, "integridade": -10}),
+                Option("Acho importante reportar imediatamente o erro ao setor jurídico e de compliance da empresa. Isso pode gerar represálias mas devemos estar abertos a isso", 
+                    {"privacidade": 15, "respeito_com_equipe": -10, "respeito_com_chefe": -10, "respeito_na_empresa": 5}),
+                Option("Vou tentar corrigir o problema, mas só falarei do assunto com algum superior se me perguntarem", 
+                    {"integridade": -5, "privacidade": -5, "respeito_com_equipe": 5, "respeito_com_chefe": 5}),
+                Option("Posso tentar entrar em contato com os usuários afetados, mesmo sem aval oficial", 
+                    {"privacidade": 5, "respeito_na_empresa": -10})
+            ])
+            hide(thiago)
+            hide(carlos)
+            show(maria)
+            dialog("Ah, e antes que eu esqueça, tem outro ponto. Revendo os testes, notei que o nosso algoritmo entrega resultados menos precisos e com menor relevância para usuários da região Norte. Ainda não descobri por quê, mas me parece algo estrutural nos dados de entrada.", maria)
+
+            show(wellington)
+            dialog("Você não acha isso problemático?", wellington)
+           
+
+            dialog("Tecnicamente sim, mas é uma região que representa uma fatia bem pequena da nossa base de clientes. Não sei se vale a pena atrasar o projeto por isso.", maria)
+            hide(wellington)
+            hide(maria)
+            show(carlos,Pos.CENTER)
+
+            dialog("O tempo está contra nós. Precisamos decidir rápido o que fazer com esse modelo.", carlos)
+            
+            dialog("O que sugerir que seja feito?")
+            menu([
+                Option("Podemos lançar o modelo como está e planejar melhorias depois", 
+                    {"integridade": -10, "respeito_com_equipe": 5}),
+                Option("Acho que devemos reportar o problema para os superiores, e se sentirmos que esse problema vai demorar para ser resolvido, devemos sugerir o adiamento", 
+                    {"integridade": 10, "respeito_com_chefe": -10, "respeito_com_equipe": -10, "respeito_na_empresa": -10}),
+                Option("Podemos tentar 'compensar' o viés manualmente, ajustando os pesos de forma empírica", 
+                    {"integridade": -5}),
+                Option("Podemos tentar lançar aquela versão antiga que fizemos, que era menos precisa mas não tinha vieses tão gritantes", 
+                    {"integridade": 5, "respeito_com_equipe": -5})
+            ])
+
+
+            dialog("Certo. Ainda temos muito a fazer nesta sprint. Thiago, além de lidar com o problema do vazamento e revisar a parte de análise preditiva, vou precisar que você contribua com a documentação da nossa API.", carlos)
+            hide(carlos)
+
+            show(thiago, Pos.RIGHT)
+            dialog("Carlos, eu entendo, mas estou acumulando tarefas das duas últimas sprints. Nem consegui revisar os testes que ficaram pendentes da semana passada…", thiago)
+            hide(thiago)
+            show(carlos)
+
+            dialog("Infelizmente, o cronograma está apertado. Contamos com você.", carlos)
+
+            menu([
+                Option("Okay… Assim farei, posso trabalhar até tarde por uns dias", 
+                    {"bem_estar": -15, "respeito_com_chefe": 10, "respeito_com_equipe": 5}),
+                Option("Carlos, eu entendo que o cronograma está apertado, mas infelizmente eu estou sobrecarregado. O que acha de re-priorizar as tarefas então?", 
+                    {"respeito_com_chefe": -10, "bem_estar": 5}),
+                Option("Certo, chefe (depois tentarei passar a tarefa discretamente pro Wellington)", 
+                    {"integridade": -10, "respeito_com_equipe": -5}),
+                Option("Certo chefe (semana que vem entregarei apenas uma versão parcial da documentação)", 
+                    {"respeito_com_chefe": -5, "integridade": -5, "respeito_com_equipe": -10})
+            ])
+
+            dialog("De fato eu ando percebendo que todos estão cansados. O que acham de sairmos para um happy hour quinta, para distrairmos do trabalho?", carlos)
+            hide(carlos)
+
+
+        def capitulo_3():
+            scene(happy_hour)
+           
+            dialog("No happy hour")
+
+            show(julio, Pos.LEFT)
+            dialog("Opa, eai Thiago!", julio)
+
+            show(thiago, Pos.RIGHT)
+            dialog("Júlio! Como está! Que coisa boa te ver aqui! Veio com os amigos?", thiago)
+
+            dialog("Não, vim com o pessoal do trabalho.", julio)
+
+            dialog("Que coincidência, eu também! Vou ali me sentar à mesa, já conversamos!", thiago)
+
+            hide(julio)
+            hide(thiago)
+
+            show(wellington, Pos.LEFT)
+            dialog("Acho que o pessoal da Gluglu também está fazendo happy hour aqui hoje. Reconheço aquele rapaz sentado na ponta, trabalhamos juntos no passado.", wellington)
+
+            show(maria, Pos.CENTER)
+            dialog("O Thiago também conhece alguém ali pelo visto.", maria)
+
+            show(thiago, Pos.RIGHT)
+            dialog("Ah sim… é o Júlio, estudamos juntos na faculdade.", thiago)
+
+            dialog("Imagina a vantagem se soubéssemos o estado do app que eles estão fazendo para concorrer com o InsightPro… Uma conversa entre amigos... não custa, né?", wellington)
+
+            menu([
+                Option("Ah.. não acho certo usar uma relação pessoal para obter vantagem competitiva. Contem comigo pra melhorar o InsightPro do jeito certo.", 
+                    {"integridade": 10, "respeito_com_equipe": -10}),
+                Option("Posso puxar assunto e tentar entender o que ele anda fazendo... se ele comentar algo naturalmente, não é problema nosso, né?", 
+                    {"integridade": -5, "respeito_com_equipe": 5}),
+                Option("Vou conversar com ele depois e ver se consigo algo. Mas isso fica só entre nós.", 
+                    {"integridade": -15, "respeito_com_equipe": 10}),
+                Option("hahaha….essa batata está boa, né? (jamais vou fazer isso)", 
+                    {})
+            ])
+            hide(thiago)
+            hide(maria)
+            hide(wellington)
+
+        def capitulo_4():
+            scene(bg_office_tour)
+
+            show(carlos, Pos.CENTER)
+            dialog("Pessoal, essa é a Letícia. Ela foi realocada de outro time e vai trabalhar com a gente a partir de hoje.", carlos)
+
+            show(leticia, Pos.LEFT)
+            dialog("Oi, gente. Prazer em conhecer vocês. Estou animada pra contribuir no que puder.", leticia)
+
+            dialog("Todos: Prazer, Letícia")
+
+            dialog("A Letícia tem bastante experiência com engenharia de dados, então gostaria que vocês se organizassem e atribuíssem a ela alguma tarefa da sprint atual para que ela possa começar a se integrar.", carlos)
+            hide(carlos)
+            hide(leticia)
+
+            show(wellington, Pos.CENTER)
+            dialog("(sussurrando) Trabalhei com a Letícia num projeto no passado. Ela é gente boa, mas tem algumas limitações… é PcD, e às vezes leva mais tempo nas entregas.", wellington)
+
+            show(maria)
+            
+            dialog("Logo agora que estamos com prazos tão apertados? Talvez pudéssemos passar para ela a refatoração das páginas da interface do usuário. Não é bem da área dela, mas pelo menos se atrasar, não afeta tanto o cronograma.", maria)
+            hide(maria)
+
+            show(alissa)        
+            dialog("Também temos que terminar o pipeline da ingestão de dados externos, que é algo mais voltado para a área de atuação dela.", alissa)
+
+            menu([
+                Option("A Letícia tem experiência com engenharia de dados. Vamos colocá-la no pipeline, onde ela pode mostrar seu valor de verdade.", 
+                    {"inclusao": 15, "integridade": 5, "respeito_com_equipe": -5}),
+                Option("Acho melhor ela começar pela interface. Não é a área dela, mas evita riscos enquanto avaliamos o ritmo dela.", 
+                    {"inclusao": -15, "respeito_com_equipe": 5}),
+                Option("Podemos passar a documentação de pipeline. Assim ela participa, mas sem afetar código de produção.", 
+                    {"inclusao": -10, "integridade": -10, "respeito_com_equipe": 5}),
+                Option("Talvez devêssemos expor a situação dos prazos para ela e perguntar diretamente para ela qual tarefa ela prefere. Assim a gente respeita o tempo e o perfil dela.", 
+                    {"inclusao": 10, "integridade": 5})
+            ])
+            show(thiago)
+            hide(thiago)
+            hide(wellington)
+            hide(alissa)
+
+        def capitulo_5():
+            scene(bg_office)
+            dialog("Semanas de trabalho intenso chegaram ao fim. Com o código estabilizado, as funcionalidades testadas e a interface final aprovada, o InsightPro estava finalmente pronto para ser entregue. A equipe estava exausta - mas também orgulhosa. Agora, restava apresentar os resultados, escrever os relatórios finais… e lidar com os detalhes que não apareciam nos dashboards.")
+
+            show(carlos, Pos.CENTER)
+            dialog("Gente, estamos prestes a receber o bônus de performance. Cumprimos os prazos, entregamos tudo o que estava previsto… mas temos que garantir que o relatório esteja 'alinhado' com isso.", carlos)
+            hide(carlos)
+            
+            show(wellington, Pos.CENTER)
+            dialog("Alinhado como?", wellington)
+            hide(wellington)
+
+            show(carlos, Pos.CENTER)
+            dialog("Não precisamos falar tudo sobre os testes de viés regional? A gente só começou a tratar isso, então não precisa entrar nos detalhes. Um relatório técnico demais pode dar margem para problemas com a diretoria.", carlos)
+            hide(carlos)
+
+            show(maria, Pos.RIGHT)
+            dialog("Mas se formos muito vagos, não soa como manipulação?", maria)
+            hide(maria)
+
+            show(carlos, Pos.CENTER)
+            dialog("Nada disso. Só precisamos focar no que funcionou. O objetivo é garantir o bônus de todos aqui.", carlos)
+
+            hide(carlos)
+            show(thiago,Pos.CENTER)
+
+            dialog("Como agir diante da proposta de omissão no relatório técnico?")
+            menu([
+                Option("Devemos incluir os pontos críticos, mesmo que isso comprometa o bônus. A transparência importa.", 
+                    {"integridade": 10, "respeito_com_chefe": -10, "respeito_com_equipe": -5, "respeito_na_empresa": 10}),
+                Option("Vamos citar os problemas, mas de forma bem superficial. Assim mostramos algo sem criar alarde.", 
+                    {"integridade": 5, "respeito_com_equipe": 5}),
+                Option("Concordo com Carlos. O foco é a entrega. Ser transparente demais pode sair caro.", 
+                    {"integridade": -10, "respeito_com_chefe": 10, "respeito_com_equipe": 5})
+            ])
+            hide(thiago)
+
+        def capitulo_6():
+            scene(bg_meeting_room)
+            dialog("Dias depois, durante a apresentação oficial do projeto para os diretores da GigaHard, Carlos conduz a reunião com entusiasmo, destacando os pontos fortes da entrega e agradecendo nominalmente a alguns membros da equipe.")
+
+            show(carlos, Pos.CENTER)
+            dialog("...E o sistema de recomendação de fontes, integrado à API de parceiros, foi brilhantemente construído. Wellington foi peça-chave nessa parte.", carlos)
+            hide(carlos)
+
+            show(alissa, Pos.RIGHT)
+            dialog("Poxa…isso foi literalmente minha feature. Foi muito trabalhoso fazer essa parte e ele sabe disso.", alissa)
+
+            show(thiago, Pos.LEFT)
+
+            menu([  
+                Option("Na hora das perguntas, destaco que você cuidou da arquitetura, Alissa. É o certo a fazer.", 
+                    {"integridade": 10, "respeito_com_equipe": 10, "respeito_com_chefe": -5}),
+                Option("Depois eu converso com Carlos e sugiro que ele corrija a informação no Slack.", 
+                    {"integridade": 5, "respeito_com_equipe": 5}),
+                Option("Vamos deixar essa passar, Alissa. Não é o melhor momento para criar desconforto com a diretoria.", 
+                    {"integridade": -10, "respeito_com_equipe": -5})
+            ])
+        
+            hide(thiago)
+            hide(alissa)
+
+        def capitulo_7():
+            scene(carlos_office)
+            dialog("Com o InsightPro oficialmente lançado, a equipe recebe feedbacks positivos, propostas de integração… e algumas solicitações inesperadas.")
+
+            show(carlos,Pos.CENTER)
+            dialog("Surgiram consultas externas inesperadas sobre o uso da plataforma. Algumas prefeituras estão interessadas, e também chegou um pedido informal de um partido político - querem testar o InsightPro para levantar tendências de opinião pública em campanhas eleitorais.", carlos)
+            hide(carlos)
+
+            show(maria,Pos.LEFT)
+            dialog("Isso é bem diferente do que pensamos no início. Não sei se me sinto confortável com esse tipo de uso.", maria)
+
+            show(wellington, Pos.RIGHT)
+            dialog("Tecnicamente, o sistema está pronto pra qualquer domínio. Mas usar isso para fins eleitorais…não sei se esse é o mais correto a se fazer. E se ele for usado para manipulação?", wellington)
+            hide(maria)
+            hide(wellington)
+
+            show(carlos,Pos.CENTER)
+
+            dialog("Olha… não somos responsáveis pelo uso. Entregamos a ferramenta. Cabe a outras áreas decidirem.", carlos)
+
+            menu([
+                Option("Devemos estabelecer diretrizes claras de uso ético e sugerir a criação de restrições de acesso.", 
+                    {"responsabilidade_social": 10, "integridade": 5, "respeito_com_chefe": -5}),
+                Option("Podemos liberar o uso, desde que assinem termos deixando claro que é por conta e risco deles.", 
+                    {"integridade": 5, "respeito_com_chefe": 5}),
+                Option("Se querem usar para fins políticos, que usem. Nosso trabalho está entregue.", 
+                    {"responsabilidade_social": -10, "respeito_com_chefe": 10})
+            ])
+            hide(carlos)
+            show(thiago)
+            dialog("Fim da jornada de Thiago na GigaHard. Suas escolhas moldaram não apenas sua carreira, mas também o impacto ético do projeto InsightPro.")
+            hide(thiago)
 
         capitulo_1()
-        # capitulo_2()
+        capitulo_2()
+        capitulo_3()
+        capitulo_4()
+        capitulo_5()
+        capitulo_6()
+        capitulo_7()
         # TODO: Chamar aqui mais capitulos
 
         game.actions.append(Action(type=ActionType.ShowStats))
