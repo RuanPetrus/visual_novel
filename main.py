@@ -410,7 +410,7 @@ def game_script(game: Game) -> None:
         }
         game.player_status = status
 
-        bg_office = pygame.image.load(BG_FOLDER + 'gigahard_entrance.png').convert()
+        bg_office = pygame.image.load(BG_FOLDER + 'gigahard_office.png').convert()
         bg_reception = pygame.image.load(BG_FOLDER + 'gigahard_entrance.png').convert()
         bg_office_tour = pygame.image.load(BG_FOLDER + 'gigahard_tour.png').convert()
         bg_meeting_room = pygame.image.load(BG_FOLDER + 'gigahard_office.png').convert()
@@ -462,16 +462,14 @@ def game_script(game: Game) -> None:
         )
 
         def capitulo_1():
-            scene(bg_office)
-
+            scene(bg_reception)
             # Dia 0 - Contexto
             dialog("Thiago era programador pleno numa empresa de médio porte, onde nunca se sentiu realizado profissionalmente.")
-            dialog("Recentemente, ele decidiu dar um passo ousado: aceitou uma vaga júnior na GigaHard - a empresa dos seus sonhos desde a época da faculdade.")
-            dialog("Apesar da queda na senioridade e na remuneração, Thiago viu na GigaHard uma oportunidade única:  sempre admirou os produtos da empresa e sabe que, além da boa  reputação, ela oferece ótimas perspectivas de crescimento e bons salários no longo prazo.")
-            dialog("Com este contexto, Thiago está determinado (e um pouco pressionado) a ascender profissionalmente e conquistar seu espaço na  GigaHard. Para isso, ele planeja ser participativo e empenhado nas atividades dentro da GigaHard")
+            dialog("Recentemente, ele decidiu dar um passo ousado: aceitou uma vaga júnior na MicroHard - a empresa dos seus sonhos desde a época da faculdade.")
+            dialog("Apesar da queda na senioridade e na remuneração, Thiago viu na MicroHard uma oportunidade única:  sempre admirou os produtos da empresa e sabe que, além da boa  reputação, ela oferece ótimas perspectivas de crescimento e bons salários no longo prazo.")
+            dialog("Com este contexto, Thiago está determinado (e um pouco pressionado) a ascender profissionalmente e conquistar seu espaço na  MicroHard. Para isso, ele planeja ser participativo e empenhado nas atividades dentro da MicroHard")
 
             # Dia 1
-            scene(bg_reception)
             dialog("Dia 1")
 
             show(thiago, Pos.LEFT)
@@ -802,7 +800,7 @@ def game_script(game: Game) -> None:
 
         def capitulo_6():
             scene(bg_meeting_room)
-            dialog("Dias depois, durante a apresentação oficial do projeto para os diretores da GigaHard, Carlos conduz a reunião com entusiasmo, destacando os pontos fortes da entrega e agradecendo nominalmente a alguns membros da equipe.")
+            dialog("Dias depois, durante a apresentação oficial do projeto para os diretores da MicroHard, Carlos conduz a reunião com entusiasmo, destacando os pontos fortes da entrega e agradecendo nominalmente a alguns membros da equipe.")
 
             show(carlos, Pos.CENTER)
             dialog("...E o sistema de recomendação de fontes, integrado à API de parceiros, foi brilhantemente construído. Wellington foi peça-chave nessa parte.", carlos)
@@ -855,7 +853,7 @@ def game_script(game: Game) -> None:
             ])
             hide(carlos)
             show(thiago)
-            dialog("Fim da jornada de Thiago na GigaHard. Suas escolhas moldaram não apenas sua carreira, mas também o impacto ético do projeto InsightPro.")
+            dialog("Fim da jornada de Thiago na MicroHard. Suas escolhas moldaram não apenas sua carreira, mas também o impacto ético do projeto InsightPro.")
             hide(thiago)
 
         capitulo_1()
