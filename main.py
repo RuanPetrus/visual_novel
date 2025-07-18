@@ -401,7 +401,6 @@ def game_script(game: Game) -> None:
         status = {
             "bem_estar": 50,
             "privacidade": 50,
-            "responsabilidade_social": 50,
             "integridade": 50,
             "inclusao": 50,
             "respeito_com_equipe": 50,
@@ -563,9 +562,9 @@ def game_script(game: Game) -> None:
                 Option("Mesmo sem encontrar uma licença explícita, a organização pode ter diretrizes internas sobre o uso da API. O correto é entrar em contato antes de utilizar qualquer dado. Enquanto não houver autorização formal, não devemos acessar nem armazenar essas informações", 
                        {"integridade": 10, "respeito_com_equipe": -10}),
                 Option("A API está aberta, e conseguimos baixar os dados sem obstáculos. Podemos coletar tudo agora e só depois perguntar sobre a licença. Se houver uma negativa futura, ao menos já teremos uma base histórica valiosa salva para trabalhar.a", 
-                       {"integridade": -5, "respeito_com_equipe": 5}),
+                       {"integridade": -5, "respeito_com_equipe": 10}),
                 Option("Enquanto não houver uma restrição clara, devemos aproveitar. Se deixarmos passar, a Gluglu pode sair na frente. Vamos extrair o máximo possível agora - depois vemos como lidar com a parte legal.", 
-                       {"integridade": -10, "respeito_com_equipe": 5}),
+                       {"integridade": -10, "respeito_com_equipe": 0}),
             ])
 
 
@@ -586,11 +585,11 @@ def game_script(game: Game) -> None:
 
             menu([
                 Option("Mesmo sem encontrar uma licença explícita, a organização pode ter diretrizes internas sobre o uso da API. O correto é entrar em contato antes de utilizar qualquer dado. Enquanto não houver autorização formal, não devemos acessar nem armazenar essas informações", 
-                       {"integridade": 10, "respeito_com_equipe": -10}),
+                       {"integridade": 10, "respeito_com_equipe": +10}),
                 Option("A API está aberta, e conseguimos baixar os dados sem obstáculos. Podemos coletar tudo agora e só depois perguntar sobre a licença. Se houver uma negativa futura, ao menos já teremos uma base histórica valiosa salva para trabalhar.a", 
-                       {"integridade": -5, "respeito_com_equipe": 5}),
+                       {"integridade": -5, "respeito_com_equipe": +5}),
                 Option("Enquanto não houver uma restrição clara, devemos aproveitar. Se deixarmos passar, a Gluglu pode sair na frente. Vamos extrair o máximo possível agora - depois vemos como lidar com a parte legal.", 
-                       {"integridade": -10, "respeito_com_equipe": 5}),
+                       {"integridade": -10, "respeito_com_equipe": -5}),
             ])
             hide(maria)
 
@@ -617,11 +616,11 @@ def game_script(game: Game) -> None:
                 Option("Entendo, Carlos…Vou seguir sua orientação, minimizar o ocorrido para a diretoria e apagar os rastros", 
                     {"privacidade": -20, "integridade": -10}),
                 Option("Acho importante reportar imediatamente o erro ao setor jurídico e de compliance da empresa. Isso pode gerar represálias mas devemos estar abertos a isso", 
-                    {"privacidade": 15, "respeito_com_equipe": -10, "respeito_com_chefe": -10, "respeito_na_empresa": 5}),
+                    {"privacidade": 20, "respeito_com_equipe": -10, "respeito_com_chefe": -10, "respeito_na_empresa": 20}),
                 Option("Vou tentar corrigir o problema, mas só falarei do assunto com algum superior se me perguntarem", 
-                    {"integridade": -5, "privacidade": -5, "respeito_com_equipe": 5, "respeito_com_chefe": 5}),
+                    {"integridade": -5, "privacidade": -5, "respeito_com_equipe": 10, "respeito_com_chefe": 10}),
                 Option("Posso tentar entrar em contato com os usuários afetados, mesmo sem aval oficial", 
-                    {"privacidade": 5, "respeito_na_empresa": -10})
+                    {"privacidade": 15, "respeito_na_empresa": -40})
             ])
             hide(thiago)
             hide(carlos)
@@ -642,13 +641,13 @@ def game_script(game: Game) -> None:
             dialog("O que sugerir que seja feito?")
             menu([
                 Option("Podemos lançar o modelo como está e planejar melhorias depois", 
-                    {"integridade": -10, "respeito_com_equipe": 5}),
+                    {"integridade": -10, "respeito_com_equipe": +5}),
                 Option("Acho que devemos reportar o problema para os superiores, e se sentirmos que esse problema vai demorar para ser resolvido, devemos sugerir o adiamento", 
                     {"integridade": 10, "respeito_com_chefe": -10, "respeito_com_equipe": -10, "respeito_na_empresa": -10}),
                 Option("Podemos tentar 'compensar' o viés manualmente, ajustando os pesos de forma empírica", 
                     {"integridade": -5}),
                 Option("Podemos tentar lançar aquela versão antiga que fizemos, que era menos precisa mas não tinha vieses tão gritantes", 
-                    {"integridade": 5, "respeito_com_equipe": -5})
+                    {"integridade": 5,})
             ])
 
 
@@ -664,11 +663,11 @@ def game_script(game: Game) -> None:
 
             menu([
                 Option("Okay… Assim farei, posso trabalhar até tarde por uns dias", 
-                    {"bem_estar": -15, "respeito_com_chefe": 10, "respeito_com_equipe": 5}),
+                    {"bem_estar": -15, "respeito_com_chefe": 10, "respeito_com_equipe": 10}),
                 Option("Carlos, eu entendo que o cronograma está apertado, mas infelizmente eu estou sobrecarregado. O que acha de re-priorizar as tarefas então?", 
-                    {"respeito_com_chefe": -10, "bem_estar": 5}),
+                    {"respeito_com_chefe": -10, "bem_estar": 10}),
                 Option("Certo, chefe (depois tentarei passar a tarefa discretamente pro Wellington)", 
-                    {"integridade": -10, "respeito_com_equipe": -5}),
+                    {"integridade": -10, "respeito_com_equipe": -5,"bem_estar": 5}),
                 Option("Certo chefe (semana que vem entregarei apenas uma versão parcial da documentação)", 
                     {"respeito_com_chefe": -5, "integridade": -5, "respeito_com_equipe": -10})
             ])
@@ -710,7 +709,7 @@ def game_script(game: Game) -> None:
                 Option("Ah.. não acho certo usar uma relação pessoal para obter vantagem competitiva. Contem comigo pra melhorar o InsightPro do jeito certo.", 
                     {"integridade": 10, "respeito_com_equipe": -10}),
                 Option("Posso puxar assunto e tentar entender o que ele anda fazendo... se ele comentar algo naturalmente, não é problema nosso, né?", 
-                    {"integridade": -5, "respeito_com_equipe": 5}),
+                    {"integridade": -5, "respeito_com_equipe": 10}),
                 Option("Vou conversar com ele depois e ver se consigo algo. Mas isso fica só entre nós.", 
                     {"integridade": -15, "respeito_com_equipe": 10}),
                 Option("hahaha….essa batata está boa, né? (jamais vou fazer isso)", 
@@ -748,13 +747,13 @@ def game_script(game: Game) -> None:
 
             menu([
                 Option("A Letícia tem experiência com engenharia de dados. Vamos colocá-la no pipeline, onde ela pode mostrar seu valor de verdade.", 
-                    {"inclusao": 15, "integridade": 5, "respeito_com_equipe": -5}),
+                    {"inclusao": 25, "integridade": 5, "respeito_com_equipe": -10}),
                 Option("Acho melhor ela começar pela interface. Não é a área dela, mas evita riscos enquanto avaliamos o ritmo dela.", 
-                    {"inclusao": -15, "respeito_com_equipe": 5}),
+                    {"inclusao": -35, "respeito_com_equipe": 10}),
                 Option("Podemos passar a documentação de pipeline. Assim ela participa, mas sem afetar código de produção.", 
-                    {"inclusao": -10, "integridade": -10, "respeito_com_equipe": 5}),
+                    {"inclusao": -20, "integridade": -10, "respeito_com_equipe": 10}),
                 Option("Talvez devêssemos expor a situação dos prazos para ela e perguntar diretamente para ela qual tarefa ela prefere. Assim a gente respeita o tempo e o perfil dela.", 
-                    {"inclusao": 10, "integridade": 5})
+                    {"inclusao": 30, "integridade": 5})
             ])
             show(thiago)
             hide(thiago)
@@ -790,11 +789,11 @@ def game_script(game: Game) -> None:
             dialog("Como agir diante da proposta de omissão no relatório técnico?")
             menu([
                 Option("Devemos incluir os pontos críticos, mesmo que isso comprometa o bônus. A transparência importa.", 
-                    {"integridade": 10, "respeito_com_chefe": -10, "respeito_com_equipe": -5, "respeito_na_empresa": 10}),
+                    {"integridade": 10, "respeito_com_chefe": -10, "respeito_com_equipe": -5, "respeito_na_empresa": 20}),
                 Option("Vamos citar os problemas, mas de forma bem superficial. Assim mostramos algo sem criar alarde.", 
-                    {"integridade": 5, "respeito_com_equipe": 5}),
+                    {"integridade": 5, "respeito_com_equipe": 10}),
                 Option("Concordo com Carlos. O foco é a entrega. Ser transparente demais pode sair caro.", 
-                    {"integridade": -10, "respeito_com_chefe": 10, "respeito_com_equipe": 5})
+                    {"integridade": -10, "respeito_com_chefe": 10, "respeito_com_equipe": 10})
             ])
             hide(thiago)
 
@@ -813,11 +812,11 @@ def game_script(game: Game) -> None:
 
             menu([  
                 Option("Na hora das perguntas, destaco que você cuidou da arquitetura, Alissa. É o certo a fazer.", 
-                    {"integridade": 10, "respeito_com_equipe": 10, "respeito_com_chefe": -5}),
+                    {"integridade": 10, "respeito_com_equipe": 10, "respeito_com_chefe": -10}),
                 Option("Depois eu converso com Carlos e sugiro que ele corrija a informação no Slack.", 
-                    {"integridade": 5, "respeito_com_equipe": 5}),
+                    {"integridade": 5, "respeito_com_equipe": 10}),
                 Option("Vamos deixar essa passar, Alissa. Não é o melhor momento para criar desconforto com a diretoria.", 
-                    {"integridade": -10, "respeito_com_equipe": -5})
+                    {"integridade": -10, "respeito_com_equipe": -10})
             ])
         
             hide(thiago)
@@ -845,11 +844,11 @@ def game_script(game: Game) -> None:
 
             menu([
                 Option("Devemos estabelecer diretrizes claras de uso ético e sugerir a criação de restrições de acesso.", 
-                    {"responsabilidade_social": 10, "integridade": 5, "respeito_com_chefe": -5}),
+                    {"integridade": 10, "respeito_com_chefe": -5}),
                 Option("Podemos liberar o uso, desde que assinem termos deixando claro que é por conta e risco deles.", 
                     {"integridade": 5, "respeito_com_chefe": 5}),
                 Option("Se querem usar para fins políticos, que usem. Nosso trabalho está entregue.", 
-                    {"responsabilidade_social": -10, "respeito_com_chefe": 10})
+                    {"integridade": -10, "respeito_com_chefe": 10})
             ])
             hide(carlos)
             show(thiago)
