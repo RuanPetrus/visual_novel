@@ -5,18 +5,23 @@ from dataclasses import dataclass, field
 from enum import Enum
 import pygame
 from pygame.font import Font
-from pygame import Surface, Color, Rect, K_RETURN, K_UP, K_DOWN
+from pygame import Surface, Color, Rect, K_RETURN, K_UP, K_DOWN, K_s
+import pygame.mixer
 
 SEP = os.path.sep
 IMAGES_FOLDER = "images" +SEP
 FONTS_FOLDER = "fonts" + SEP
 CARACTER_FOLDER = IMAGES_FOLDER + "caracters" + SEP
 BG_FOLDER = IMAGES_FOLDER + "backgrounds" + SEP
+MUSIC_FOLDER = "music" + SEP
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 DIALOG_PADDING = 25
 DIALOG_CORNER_RADIUS = 10
 DIALOG_OPPACITY = 0.8
+
+STATUS_PADDING = SCREEN_HEIGHT // 60
+MINI_STATUS_PADDING = SCREEN_HEIGHT // 600
 
 MENU_WIDTH = 3/4 * SCREEN_WIDTH
 MENU_HEIGHT = 3/4 * SCREEN_HEIGHT
@@ -27,19 +32,35 @@ DIALOG_HEIGHT = 1/3 * SCREEN_HEIGHT
 STATS_WIDTH = 3/4 * SCREEN_WIDTH
 STATS_HEIGHT = 3/4 * SCREEN_HEIGHT
 
+MINI_STATS_WIDTH = 1/6 * SCREEN_WIDTH
+MINI_STATS_HEIGHT = 1/4 * SCREEN_HEIGHT
+
 CARACTER_HEIGHT = 3/4 * SCREEN_HEIGHT
 
 CARACTER_SEP_SIZE = 20
 FONT_SIZE = 40
 TITLE_FONT_SIZE = 50
+STATS_TITLE_FONT_SIZE = 70
+STATS_MINI_FONT_SIZE = 10
 
 WHITE = Color(255, 255, 255, 255)
 BLACK = Color(0, 0, 0, 255)
-BLUE = Color(0, 0, 255, 255)
+BLUE = Color(79, 70, 228, 255)
 GREEN = Color(0, 255, 0, 255)
 
 MENU_FG_COLOR = Color(48, 55, 62, 255)
 MENU_BG_COLOR = Color(245, 247, 250, 255)
+
+STATS_COLORS = [
+    BLUE, 
+    Color(22, 163, 74, 255),
+    Color(14, 165, 233, 255),
+    Color(236, 72, 153, 255),
+    Color(245, 158, 11, 255),
+    Color(220, 38, 38, 255),
+    Color(16, 185, 129, 255),
+    Color(139, 92, 246, 255),
+]
 
 # class syntax
 
@@ -82,10 +103,13 @@ class Game:
     dialog_surface: Surface
     menu_surface: Surface
     stats_surface: Surface
+    stats_mini_surface: Surface
     font: Font
     menu_font: Font
     dialog_title_font: Font
     stats_font: Font
+    stats_title_font: Font
+    stats_mini_font: Font
     running: bool = True
     dt: float = 0
     caracters: list[Caracter] = field(default_factory=list)
@@ -100,6 +124,8 @@ class Game:
     menu_idx: int = 0
     background: Surface | None = None
     show_stats: bool = False
+    stats_colors: list[Color] = field(default_factory=list)
+
 
 def scale_uniform(s: Surface, scalar: float) -> Surface:
     w, h = s.get_size()
@@ -224,6 +250,7 @@ def draw_menu(game: Game):
 
 def draw_background(game: Game):
     if game.background is None: return
+    if game.show_stats: return
     background = pygame.transform.scale(game.background, game.screen.get_size())
     game.screen.blit(background, (0, 0))
 
@@ -235,19 +262,66 @@ def draw_stats(game: Game):
         text_width = max(text_width, width)
         text_height += height
 
-    value_width = game.stats_surface.get_width() - text_width
+    value_width = game.stats_surface.get_width() - text_width - DIALOG_PADDING
 
     text_sur = Surface((text_width, text_height), pygame.SRCALPHA, 32)
     value_sur = Surface((value_width, text_height), pygame.SRCALPHA, 32)
 
     vertical_offset = 0
-    for k in game.player_status:
+    for i, k in enumerate(game.player_status):
         width, height = game.stats_font.size(k)
+        stat_color = game.stats_colors[i % len(game.stats_colors)]
+        stat_value_width = game.player_status[k] / 100 * value_width
         text_sur.blit(
-            dialog_to_surface(k, text_width, game.stats_font, MENU_FG_COLOR), 
+            dialog_to_surface(k, text_width, game.stats_font, stat_color), 
             (0, vertical_offset)
         )
+        # Drawing empty bar
+        pygame.draw.rect(value_sur, MENU_FG_COLOR, Rect(0, vertical_offset+STATUS_PADDING, value_width, height - 2*STATUS_PADDING), border_radius=10)
+
+        # Drawing colored bar
+        pygame.draw.rect(value_sur, stat_color, Rect(0, vertical_offset+STATUS_PADDING, stat_value_width, height - 2*STATUS_PADDING), border_radius=10)
+
         vertical_offset += height
+
+    title = "Status"
+    title_sur = dialog_to_surface(title, game.stats_title_font.size(title)[0], game.stats_font, MENU_FG_COLOR)
+    game.stats_surface.blit(
+        title_sur, 
+        ((game.stats_surface.get_width() - title_sur.get_width())/2, 0)
+    )
+
+    title_height = title_sur.get_height()
+    d_height = title_height + (game.stats_surface.get_height() - text_height - title_height)/2
+
+    game.stats_surface.blit(text_sur, (0, d_height))
+    game.stats_surface.blit(value_sur, (text_width + DIALOG_PADDING, d_height))
+
+def draw_mini_status(game: Game):
+    text_width = 0
+    text_height = 0
+    for k in game.player_status:
+        width, height = game.stats_mini_font.size(k)
+        text_width = max(text_width, width)
+        text_height += height
+
+    value_width = game.stats_mini_surface.get_width()
+    value_sur = Surface((value_width, text_height), pygame.SRCALPHA, 32)
+
+    vertical_offset = 0
+    for i, k in enumerate(game.player_status):
+        width, height = game.stats_mini_font.size(k)
+        stat_color = game.stats_colors[i % len(game.stats_colors)]
+        stat_value_width = game.player_status[k] / 100 * value_width
+        # Drawing empty bar
+        pygame.draw.rect(value_sur, MENU_FG_COLOR, Rect(0, vertical_offset+MINI_STATUS_PADDING, value_width, height - 2*MINI_STATUS_PADDING), border_radius=10)
+
+        # Drawing colored bar
+        pygame.draw.rect(value_sur, stat_color, Rect(0, vertical_offset+MINI_STATUS_PADDING, stat_value_width, height - 2*MINI_STATUS_PADDING), border_radius=3)
+
+        vertical_offset += height
+
+    game.stats_mini_surface.blit(value_sur, (game.stats_mini_surface.get_width() - value_width, 0))
 
 def update_game(game: Game):
     if game.action_idx < len(game.actions):
@@ -294,10 +368,14 @@ def update_game(game: Game):
                     game.background = action.background
                     game.action_idx += 1
             case type.ShowStats:
+                pygame.mixer.music.fadeout(2000) 
+                pygame.mixer.music.load(MUSIC_FOLDER + "end.mp3") 
+                pygame.mixer.music.set_volume(0.7)
+                pygame.mixer.music.play(-1,0.0)
                 game.show_stats = True
-
+                game.action_idx += 1
     else:
-        game.running = False
+        pass
 
 def game_script(game: Game) -> None:
     def show(c: Caracter, pos: Pos = Pos.LEFT):
@@ -469,8 +547,10 @@ def game_script(game: Game) -> None:
             """TODO: Colocar aqui o capitulo 2 seguindo o exemplo do capitulo 1"""
 
         capitulo_1()
-        capitulo_2()
+        # capitulo_2()
         # TODO: Chamar aqui mais capitulos
+
+        game.actions.append(Action(type=ActionType.ShowStats))
 
     script()
 
@@ -484,16 +564,34 @@ def main():
         dialog_surface=Surface((DIALOG_WIDTH, DIALOG_HEIGHT), pygame.SRCALPHA, 32),
         menu_surface=Surface((MENU_WIDTH, MENU_HEIGHT), pygame.SRCALPHA, 32),
         stats_surface=Surface((STATS_WIDTH, STATS_HEIGHT), pygame.SRCALPHA, 32),
+        stats_mini_surface=Surface((MINI_STATS_WIDTH, MINI_STATS_HEIGHT), pygame.SRCALPHA, 32),
         font=Font(FONTS_FOLDER + "Oswaldt.ttf", FONT_SIZE),
         menu_font=Font(FONTS_FOLDER + "Oswaldt.ttf", FONT_SIZE),
         stats_font=Font(FONTS_FOLDER + "Oswaldt.ttf", FONT_SIZE),
+        stats_mini_font=Font(FONTS_FOLDER + "Oswaldt.ttf", STATS_MINI_FONT_SIZE),
+        stats_title_font=Font(FONTS_FOLDER + "Oswaldt.ttf", STATS_TITLE_FONT_SIZE),
         dialog_title_font=Font(FONTS_FOLDER + "Oswaldt.ttf", TITLE_FONT_SIZE),
-        useful_keys=[K_RETURN, K_UP, K_DOWN]
+        useful_keys=[K_RETURN, K_UP, K_DOWN, K_s],
+        stats_colors=STATS_COLORS,
     )
 
     game_script(game)
 
     clock = pygame.time.Clock()
+    pygame.mixer.init()
+    pygame.mixer.music.load(MUSIC_FOLDER + "background.mp3") 
+    pygame.mixer.music.play(-1,0.0)
+    pygame.mixer.music.set_volume(0.1)
+
+    se_enter_menu = pygame.mixer.Sound(MUSIC_FOLDER + "enter_menu.wav")
+    se_enter = pygame.mixer.Sound(MUSIC_FOLDER + "enter.wav")
+    se_move_menu = pygame.mixer.Sound(MUSIC_FOLDER + "move_menu.wav")
+    se_s = pygame.mixer.Sound(MUSIC_FOLDER + "s.wav")
+
+    se_enter_menu.set_volume(0.5)
+    se_enter.set_volume(2.0)
+    se_move_menu.set_volume(4.0)
+    se_s.set_volume(0.5)
 
     while game.running:
         # poll for events
@@ -509,24 +607,34 @@ def main():
         def is_pressed(key: int) -> bool:
             return keys[key] and not game.last_keys[key]
 
-        if game.menu is None:
-            if is_pressed(K_RETURN):
-                game.action_idx += 1
-        else:
-            if is_pressed(K_RETURN):
-                game.action_idx += 1
 
-                selected_option = game.menu[game.menu_idx]
-                for k in selected_option.status:
-                    game.player_status[k] += selected_option.status[k]
+        if is_pressed(K_s):
+            game.show_stats = not game.show_stats
+            se_s.play()
 
-                game.menu = None
+        if not game.show_stats:
+            if game.menu:
+                if is_pressed(K_RETURN):
+                    game.action_idx += 1
 
-            elif is_pressed(K_UP):
-                game.menu_idx = (game.menu_idx - 1) % len(game.menu)
+                    selected_option = game.menu[game.menu_idx]
+                    for k in selected_option.status:
+                        game.player_status[k] += selected_option.status[k]
 
-            elif is_pressed(K_DOWN):
-                game.menu_idx = (game.menu_idx + 1) % len(game.menu)
+                    game.menu = None
+                    se_enter_menu.play()
+
+                elif is_pressed(K_UP):
+                    game.menu_idx = (game.menu_idx - 1) % len(game.menu)
+                    se_move_menu.play()
+
+                elif is_pressed(K_DOWN):
+                    game.menu_idx = (game.menu_idx + 1) % len(game.menu)
+                    se_move_menu.play()
+            else:
+                if is_pressed(K_RETURN):
+                    game.action_idx += 1
+                    se_enter.play()
 
         for k in game.useful_keys:
             game.last_keys[k] = keys[k]
@@ -535,11 +643,13 @@ def main():
         game.dialog_surface.fill(Color(0, 0, 0, 0))  # Optional: set overall transparency (0-255)
         game.caracter_surface.fill(Color(0, 0, 0, 0))  # Optional: set overall transparency (0-255)
         game.menu_surface.fill(Color(0, 0, 0, 0))  # Optional: set overall transparency (0-255)
+        game.stats_mini_surface.fill(Color(0, 0, 0, 0))  # Optional: set overall transparency (0-255)
 
         draw_background(game)
         draw_caracters(game)
         draw_dialog(game)
         draw_menu(game)
+        draw_mini_status(game)
         draw_stats(game)
 
         if not game.show_stats:
@@ -548,8 +658,10 @@ def main():
                 game.screen.blit(game.menu_surface, ((SCREEN_WIDTH - MENU_WIDTH)/2, (SCREEN_HEIGHT - MENU_HEIGHT)/2))
             else:
                 game.screen.blit(game.dialog_surface, ((SCREEN_WIDTH - DIALOG_WIDTH)/2, SCREEN_HEIGHT - DIALOG_HEIGHT))
+            game.screen.blit(game.stats_mini_surface, ((SCREEN_WIDTH - MINI_STATS_WIDTH - DIALOG_PADDING), DIALOG_PADDING))
+
         else:
-            pass
+            game.screen.blit(game.stats_surface, ((SCREEN_WIDTH - STATS_WIDTH)/2, (SCREEN_HEIGHT - STATS_HEIGHT)/2))
 
         pygame.display.flip()
         game.dt = clock.tick(60) / 1000
